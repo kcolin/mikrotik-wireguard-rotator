@@ -1,0 +1,18 @@
+:global nextPeerEnable;
+:local wgInterface "SurfShark";
+
+:local peerList [/interface wireguard peers find interface=$wgInterface];
+:local peerCount [:len $peerList];
+
+:local currentPeer [/interface wireguard peers find interface=wgInterface disabled=no];
+
+:local newPeer [:pick $peerList ($nextPeerEnable - 1) $nextPeerEnable]
+
+/interface wireguard peers set $currentPeer disabled=yes;
+/interface wireguard peers set $newPeer disabled=no;
+
+:global nextPeerEnable ($nextPeerEnable + 1);
+
+:if ($nextPeerEnable > $peerCount) do={
+      :global nextPeerEnable 1;
+}
